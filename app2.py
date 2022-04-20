@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.linear_model import LogisticRegression
 
 
-Data = pd.read_csv('C:/Users/alber/Documents/Spring 22/AIML/loan-train.csv')
+Data = pd.read_csv('loan-train.csv')
 
 
 primaryColor="#F63366"
