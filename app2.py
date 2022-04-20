@@ -7,7 +7,7 @@ Created on Sun Apr 17 19:48:37 2022
 
 import streamlit as st
 
-st.title('Credit Spreads Wizard')
+st.title('Loan Application and Credit Spread Dashboard')
 
 import numpy as np
 import pandas as pd
