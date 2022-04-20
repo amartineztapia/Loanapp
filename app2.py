@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.linear_model import LogisticRegression
 
 
-Data = pd.read_csv('loan-train.csv')
+Data = pd.read_csv('C:/Users/alber/Documents/Spring 22/AIML/loan-train.csv')
 
 
 primaryColor="#F63366"
@@ -55,14 +55,13 @@ Education = st.radio("College Completed", (0, 1), index = int(df["Education"].me
 Credit_History = st.radio("Credit History Available", (0, 1), index = int(df["Credit_History"].median()), format_func=lambda x: Binary_options.get(x))
 
 
-ApplicantIncome = st.slider('Applicant Income', int(df['ApplicantIncome'].min()), int(df['ApplicantIncome'].max()), int(df['ApplicantIncome'].median()))
-st.write('* gross monthly income in $')
-CoapplicantIncome = st.slider('Coapplicant Income', int(df['CoapplicantIncome'].min()), int(df['CoapplicantIncome'].max()), int(df['CoapplicantIncome'].median()))
-st.write('* gross monthly income in $')
-LoanAmount = st.slider('Loan Amount', int(df['LoanAmount'].min()), int(df['LoanAmount'].max()), int(df['LoanAmount'].median()))
-st.write('* in thousands $')
-Loan_Amount_Term = st.slider('Loan Amount Term', int(df['Loan_Amount_Term'].min()), int(df['Loan_Amount_Term'].max()), int(df['Loan_Amount_Term'].median()))
-st.write('* time to maturity in months')
+ApplicantIncome = st.slider('Applicant Income ($/Mo)', int(df['ApplicantIncome'].min()), int(df['ApplicantIncome'].max()), int(df['ApplicantIncome'].median()))
+
+CoapplicantIncome = st.slider('Coapplicant Income ($/Mo)', int(df['CoapplicantIncome'].min()), int(df['CoapplicantIncome'].max()), int(df['CoapplicantIncome'].median()))
+
+LoanAmount = st.slider('Loan Amount (in thousands)', int(df['LoanAmount'].min()), int(df['LoanAmount'].max()), int(df['LoanAmount'].median()))
+Loan_Amount_Term = st.slider('Loan Amount Term (in months)', int(df['Loan_Amount_Term'].min()), int(df['Loan_Amount_Term'].max()), int(df['Loan_Amount_Term'].median()))
+
 Dependents = st.slider('Dependents', int(df['Dependents'].min()), int(df['Dependents'].max()), int(df['Dependents'].median()))
 
 
@@ -74,44 +73,35 @@ P_area = {
     }
 
 
-Property_Area = st.multiselect('Property Area', (0, 1, 2), default = int(df["Property_Area"].median()), format_func=lambda x: P_area.get(x))
+Property_Area = st.multiselect('Property Area (Select One)', (0, 1, 2), default = int(df["Property_Area"].median()), format_func=lambda x: P_area.get(x))
 Property_Area = Property_Area[0]
-st.write("Select One")
-
-Gender_Female = st.radio("You gay?", (0, 1), index = 0, format_func=lambda x: Binary_options.get(x))
 
 
 
 ## The regression
 
-log_loan = LogisticRegression()
-log_loan.fit(X_train, y_train)
-individual = [ApplicantIncome, CoapplicantIncome, LoanAmount, Married, Dependents, Education, Self_Employed, Loan_Amount_Term, Credit_History, Property_Area, Gender_Female]
-individual = np.array(individual)
-individual = individual.reshape(1, -1)   
-y_pred = log_loan.predict_proba(individual)
-pred = round(y_pred[0,1]*100,2)
+if st.button("Calculate"):
+    log_loan = LogisticRegression()
+    log_loan.fit(X_train, y_train)
+    individual = [ApplicantIncome, CoapplicantIncome, LoanAmount, Married, Dependents, Education, Self_Employed, Loan_Amount_Term, Credit_History, Property_Area, Gender_Female]
+    individual = np.array(individual)
+    individual = individual.reshape(1, -1)   
+    y_pred = log_loan.predict_proba(individual)
+    pred = round(y_pred[0,1]*100,2)
+    if pred < 50:
+        st.metric(label="Probability of Acceptance", value=str(pred)+'%', delta="-Denied")
+        st.metric(label="Credit Spread Direction (6mo)", value="Downwards", delta="-Spread will shrink")
 
-if pred < 50:
-    st.metric(label="Probability of Acceptance", value=str(pred)+'%', delta="-Denied")
-else:
-    st.metric(label="Probability of Acceptance", value=str(pred)+'%', delta="Accepted")
-    st.balloons()
-
-
-
-
-
+    else:
+        st.metric(label="Probability of Acceptance", value=str(pred)+'%', delta="Accepted")
+        st.metric(label="Credit Spread Direction (6mo)", value="Downwards", delta="-Spread will shrink")
+        st.balloons()
 
 
+from PIL import Image
+image = Image.open('Manus.jfif')
 
-
-
-
-
-
-
-
+st.image(image, caption='Manus', width=128)
 
 
 
