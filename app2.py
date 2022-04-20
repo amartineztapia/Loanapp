@@ -40,8 +40,7 @@ y = df['Loan_Status']
 
 col_names = df.columns
 col_names = col_names.drop(['Loan_Status'])
-col_names2 = col_names.drop([ "Married", "Self_Employed", "Credit_History", "Gender_Female"])
-col_names3 = col_names.drop(col_names2)
+col_names3 = col_names.drop(['ApplicantIncome', 'CoapplicantIncome','LoanAmount','Dependents','Education','Loan_Amount_Term','Credit_History','Property_Area'])
 
 Binary_options = {
     0: "No",
@@ -51,8 +50,33 @@ Binary_options = {
 for i in col_names3:
     globals()[f'{i}'] = st.radio(i, (0, 1), index = int(df[i].median()), format_func=lambda x: Binary_options.get(x))
     
-for i in col_names2:
-    globals()[f'{i}'] = st.slider(i, int(df[i].min()), int(df[i].max()), int(df[i].median()))
+
+Education = st.radio("College Completed", (0, 1), index = int(df["Education"].median()), format_func=lambda x: Binary_options.get(x))
+Credit_History = st.radio("Credit History Available", (0, 1), index = int(df["Credit_History"].median()), format_func=lambda x: Binary_options.get(x))
+
+
+ApplicantIncome = st.slider('Applicant Income', int(df['ApplicantIncome'].min()), int(df['ApplicantIncome'].max()), int(df['ApplicantIncome'].median()))
+st.write('* gross monthly income in $')
+CoapplicantIncome = st.slider('Coapplicant Income', int(df['CoapplicantIncome'].min()), int(df['CoapplicantIncome'].max()), int(df['CoapplicantIncome'].median()))
+st.write('* gross monthly income in $')
+LoanAmount = st.slider('Loan Amount', int(df['LoanAmount'].min()), int(df['LoanAmount'].max()), int(df['LoanAmount'].median()))
+st.write('* in thousands $')
+Loan_Amount_Term = st.slider('Loan Amount Term', int(df['Loan_Amount_Term'].min()), int(df['Loan_Amount_Term'].max()), int(df['Loan_Amount_Term'].median()))
+st.write('* time to maturity in months')
+Dependents = st.slider('Dependents', int(df['Dependents'].min()), int(df['Dependents'].max()), int(df['Dependents'].median()))
+
+
+
+P_area = {
+    0: "Rural",
+    1: "Semi-Urban",
+    2: "Urban"
+    }
+
+
+Property_Area = st.multiselect('Property Area', (0, 1, 2), default = int(df["Property_Area"].median()), format_func=lambda x: P_area.get(x))
+Property_Area = Property_Area[0]
+st.write("Select One")
 
 Gender_Female = st.radio("You gay?", (0, 1), index = 0, format_func=lambda x: Binary_options.get(x))
 
@@ -73,25 +97,6 @@ if pred < 50:
 else:
     st.metric(label="Probability of Acceptance", value=str(pred)+'%', delta="Accepted")
     st.balloons()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
